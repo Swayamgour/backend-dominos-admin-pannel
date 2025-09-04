@@ -90,8 +90,8 @@ export const listFranchises = async (req, res) => {
       .sort({ createdAt: -1 });
 
     res.status(200).json({
-     
-      data: franchises,
+
+      franchises,
     });
   } catch (err) {
     console.error("Error fetching franchises:", err);
