@@ -1,37 +1,23 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-
-const itemSchema = new mongoose.Schema({
-    productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+const orderItemSchema = new mongoose.Schema({
+    productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
     name: String,
-    qty: Number,
-    price: Number,
-    variant: String
+    quantity: Number,
+    unitPrice: Number
 }, { _id: false });
 
-
 const orderSchema = new mongoose.Schema({
-    customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    franchiseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Franchise' },
-    items: [itemSchema],
-    totals: {
-        subtotal: Number,
-        tax: Number,
-        deliveryFee: Number,
-        grandTotal: Number
-    },
-    payment: {
-        provider: String,
-        providerPaymentId: String,
-        status: { type: String, enum: ['pending', 'paid', 'failed'], default: 'pending' },
-        method: { type: String, enum: ['cod', 'razorpay', 'stripe', 'paypal'] }
-    },
-    status: { type: String, enum: ['placed', 'accepted', 'preparing', 'ready', 'out_for_delivery', 'delivered', 'cancelled'], default: 'placed' },
-    assignedRider: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now }
-});
+    customerId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    franchiseId: { type: mongoose.Schema.Types.ObjectId, ref: "Franchise", required: true },
+    items: [orderItemSchema],
+    subTotal: Number,
+    tax: Number,
+    deliveryFee: Number,
+    discount: Number,
+    grandTotal: Number,
+    paymentMode: { type: String, enum: ["COD", "UPI", "CARD"], default: "COD" },
+    status: { type: String, enum: ["PENDING", "ACCEPTED", "PREPARING", "OUT_FOR_DELIVERY", "COMPLETED", "CANCELLED"], default: "PENDING" }
+}, { timestamps: true });
 
-
-const Order = mongoose.model('Order', orderSchema);
-export default Order;
+export default mongoose.model("Order", orderSchema);
