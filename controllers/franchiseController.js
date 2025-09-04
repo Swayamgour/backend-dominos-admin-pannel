@@ -89,10 +89,8 @@ export const listFranchises = async (req, res) => {
       .populate("ownerUserId", "name phone role")
       .sort({ createdAt: -1 });
 
-    res.status(200).json({
+    res.status(200).json(franchises);
 
-      franchises,
-    });
   } catch (err) {
     console.error("Error fetching franchises:", err);
     res.status(500).json({ message: err.message });
