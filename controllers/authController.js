@@ -1,38 +1,78 @@
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import User from "../models/User.js";
-import { generateToken } from "../utils/generateToken.js";
 
+// REGISTER USER
 export const register = async (req, res) => {
-  try {
-    const { name, email, password, role } = req.body;
+    try {
+        const { name, phone, password, role, franchiseId } = req.body;
 
-    if (role === 'super_admin') {
-      const count = await User.countDocuments({ role: 'super_admin' });
-      if (count > 0) return res.status(400).json({ message: 'Only one super_admin allowed' });
+        if (!name || !phone || !password) {
+            return res.status(400).json({ message: "Name, phone, and password are required" });
+        }
+
+        // Check if phone already exists
+        const existingUser = await User.findOne({ phone });
+        if (existingUser) {
+            return res.status(400).json({ message: "Phone number already registered" });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const passwordHash = await bcrypt.hash(password, salt);
+
+        const newUser = await User.create({
+            name,
+            phone,
+            passwordHash,
+            role: role || "customer",
+            franchiseId: franchiseId || null,
+        });
+
+        res.status(201).json({
+            _id: newUser._id,
+            name: newUser.name,
+            phone: newUser.phone,
+            role: newUser.role,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-
-    const exists = await User.findOne({ email });
-    if (exists) return res.status(400).json({ message: 'User already exists' });
-
-    const hash = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, email, passwordHash: hash, role: role || 'customer' });
-    const token = generateToken(user._id, user.role);
-    res.status(201).json({ user: { id: user._id, name: user.name, email: user.email, role: user.role }, token });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
 };
 
+// LOGIN USER
 export const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) return res.status(401).json({ message: 'Invalid credentials' });
-    const match = await bcrypt.compare(password, user.passwordHash);
-    if (!match) return res.status(401).json({ message: 'Invalid credentials' });
-    const token = generateToken(user._id, user.role);
-    res.json({ user: { id: user._id, name: user.name, email: user.email, role: user.role }, token });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+    try {
+        const { phone, password } = req.body;
+
+        if (!phone || !password) {
+            return res.status(400).json({ message: "Phone and password are required" });
+        }
+
+        const user = await User.findOne({ phone });
+        if (!user) {
+            return res.status(400).json({ message: "Invalid phone or password" });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.passwordHash);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Invalid phone or password" });
+        }
+
+        // Generate JWT token
+        const token = jwt.sign(
+            { id: user._id, role: user.role, franchiseId: user.franchiseId },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        );
+
+        res.json({
+            _id: user._id,
+            name: user.name,
+            phone: user.phone,
+            role: user.role,
+            token,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };

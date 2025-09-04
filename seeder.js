@@ -26,7 +26,7 @@ const seedData = async () => {
     const superAdminPassword = await bcrypt.hash("12345", 10);
     const superAdmin = await User.create({
       name: "Main Admin",
-      email: "super@gmail.com",
+      phone: "9090909090",
       passwordHash: superAdminPassword,
       role: "super_admin"
     });
