@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+// import User from "../models/User.js";
+import cloudinary from "../config/cloudinary.js";
 
 // REGISTER USER
 export const register = async (req, res) => {
@@ -76,3 +78,46 @@ export const login = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+
+
+
+
+
+export const updateProfileImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "Profile image file is required" });
+    }
+
+    // ✅ Upload image to Cloudinary
+    const uploadResult = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: "profile_pics" }, // folder optional hai
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+      stream.end(req.file.buffer);
+    });
+
+    // ✅ Save secure_url in DB
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { profileImage: uploadResult.secure_url },
+      { new: true, select: "-passwordHash" }
+    );
+
+    res.json({
+      message: "Profile image updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Profile image update error:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+

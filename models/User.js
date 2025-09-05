@@ -15,6 +15,10 @@ const userSchema = new mongoose.Schema(
       ref: "Franchise",
       default: null,
     },
+    profileImage: {
+      type: String, // URL or filename
+      default: "", // empty by default
+    },
   },
   { timestamps: true }
 );

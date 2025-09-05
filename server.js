@@ -9,6 +9,7 @@ import franchiseRoutes from "./routes/franchiseRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
+import uploadRoutes from './routes/uploadRoutes.js'
 
 dotenv.config();
 await connectDB();
@@ -22,6 +23,7 @@ app.use(cors({ origin: "*", methods: ["GET", "POST", "PUT", "DELETE"] }));
 app.get("/", (req, res) => res.json({ message: "API is running" }));
 
 app.use("/api/auth", authRoutes);
+app.use("/api", uploadRoutes);
 app.use("/api/franchise", franchiseRoutes);
 app.use("/api/category", categoryRoutes);
 app.use("/api/product", productRoutes);
