@@ -6,7 +6,8 @@ const franchiseSchema = new mongoose.Schema({
     state: { type: String }, // ✅ Added state field
     address: { type: String },
     phone: { type: String },
-    ownerUserId: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null }
+    ownerUserId: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+    isActive: { type: Boolean, default: true }
 }, { timestamps: true });
 
 export default mongoose.model("Franchise", franchiseSchema);

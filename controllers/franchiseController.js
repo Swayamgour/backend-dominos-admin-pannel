@@ -125,3 +125,30 @@ export const getFranchiseDetails = async (req, res) => {
   }
 };
 
+
+
+
+// Update franchise status or other fields
+export const updateFranchiseStatus = async (req, res) => {
+  try {
+    const { franchiseId } = req.params;
+    const updates = req.body; // e.g., { status: "closed" }
+
+    const franchise = await Franchise.findByIdAndUpdate(
+      franchiseId,
+      { $set: updates },
+      { new: true } // return the updated document
+    );
+
+    if (!franchise) {
+      return res.status(404).json({ message: "Franchise not found" });
+    }
+
+    res.json({ message: "Franchise updated successfully", franchise });
+  } catch (error) {
+    console.error("updateFranchiseStatus error:", error);
+    res.status(500).json({ message: "Failed to update franchise" });
+  }
+};
+
+
