@@ -10,6 +10,7 @@ import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import uploadRoutes from './routes/uploadRoutes.js'
+import customerAuthRoutes from './routes/customerAuthRoutes.js'
 
 dotenv.config();
 await connectDB();
@@ -28,6 +29,8 @@ app.use("/api/franchise", franchiseRoutes);
 app.use("/api/category", categoryRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/order", orderRoutes);
+
+app.use("/api/customer/auth", customerAuthRoutes);
 
 // Error handler (should be last middleware)
 app.use(errorHandler);
