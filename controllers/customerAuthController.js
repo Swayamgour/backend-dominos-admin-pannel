@@ -5,13 +5,10 @@ import { generateToken } from "../utils/generateToken.js";
 import jwt from "jsonwebtoken";
 import { transporter } from "../utils/transporter.js";
 
-// import jwt from "jsonwebtoken";
-// import Customer from "../models/customerModel.js";
-// import { otpGet, otpDel } from "../utils/otpStore.js";
 
 
 const OTP_TTL = 5 * 60; // 5 minutes
-const OTP_ATTEMPT_LIMIT = 5;
+
 
 export const sendEmailOtp = async (req, res) => {
     try {
