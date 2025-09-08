@@ -1,6 +1,8 @@
 import Franchise from "../models/Franchise.js";
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
+import Order from "../models/Order.js";
+import Payment from "../routes/paymentRoutes.js";
 
 
 export const createFranchise = async (req, res) => {
@@ -96,3 +98,30 @@ export const listFranchises = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+
+// import Franchise from "../models/Franchise.js";
+// import Order from "../models/Order.js";
+// import Payment from "../models/Payment.js";
+
+export const getFranchiseDetails = async (req, res) => {
+  try {
+    const { franchiseId } = req.params;
+
+    const franchise = await Franchise.findById(franchiseId);
+    if (!franchise) return res.status(404).json({ message: "Franchise not found" });
+
+    const orders = await Order.find({ franchiseId });
+    const payments = await Payment.find({ franchiseId });
+
+    return res.json({
+      franchise,
+      orders,
+      payments
+    });
+  } catch (error) {
+    console.error("getFranchiseDetails error:", error);
+    return res.status(500).json({ message: "Failed to fetch franchise details" });
+  }
+};
+
