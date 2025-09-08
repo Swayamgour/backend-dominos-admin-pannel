@@ -6,6 +6,6 @@ router.post('/', protect, authorize('super_admin'), createFranchise);
 router.get('/', protect, authorize('super_admin'), listFranchises);
 router.get('/:franchiseId', protect, authorize('super_admin'), getFranchiseDetails);
 // Update franchise by ID
-router.patch('/:franchiseId', protect, authorize('super_admin'), updateFranchiseStatus);
+router.put('/:franchiseId', protect, authorize('super_admin'), updateFranchiseStatus);
 
 export default router;
