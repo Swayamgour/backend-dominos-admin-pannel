@@ -94,3 +94,21 @@ export const verifyEmailOtp = async (req, res) => {
 };
 
 
+// controllers/customerAuthController.js
+// import Customer from "../models/customerModel.js";
+
+export const getCustomerProfile = async (req, res) => {
+  try {
+    const customer = await Customer.findById(req.user.id).select("-otp -otpExpiry"); 
+    if (!customer) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+    res.json(customer);
+  } catch (error) {
+    console.error("Error fetching customer profile:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
