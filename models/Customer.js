@@ -29,6 +29,10 @@ const customerSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        profileImage: {
+            type: String, // URL or filename
+            default: null, // empty by default
+        },
     },
     { timestamps: true }
 );

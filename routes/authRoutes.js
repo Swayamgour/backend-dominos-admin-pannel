@@ -8,6 +8,7 @@ router.post('/login', login);
 // router.put("/profile-image", protect, updateProfileImage);
 router.put("/profile/image", protect, upload.single("profileImage"), updateProfileImage);
 
+
 router.get("/check-token", protect, (req, res) => {
     res.json({
         valid: true,
